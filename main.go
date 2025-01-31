@@ -44,11 +44,20 @@ func main() {
 	db.AutoMigrate(&Product{}) //Auto Create Table จะลบไม่ได้
 	fmt.Print("Migrate Successful")
 
-	product := Product{
-		Name:        "Tuschy",
-		Description: "Test",
-		Price:       1000,
-	}
+	// product := Product{
+	// 	Name:        "New Tuschy",
+	// 	Description: "New Test_2",
+	// 	Price:       1000,
+	// }
 
-	createProduct(db, &product)
+	// createProduct(db, &product)
+
+	currenProduct := getProduct(db, 1)
+	fmt.Println(currenProduct)
+
+	currenProduct.Name = "newtuschy"
+	currenProduct.Description = "NEW"
+	currenProduct.Price = 2000
+
+	updateProduct(db, currenProduct)
 }
