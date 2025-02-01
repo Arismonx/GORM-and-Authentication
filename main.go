@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -22,6 +23,13 @@ const (
 )
 
 func main() {
+
+	// Load environment variables from .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	app := fiber.New()
 	dsn := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
@@ -132,6 +140,18 @@ func main() {
 
 		return c.JSON(fiber.Map{
 			"message": "Delete Product Successful",
+		})
+	})
+	// env
+
+	app.Get("/api/config", func(c *fiber.Ctx) error {
+		secretKey := os.Getenv("SECRET_KEY")
+		if secretKey == "" {
+			secretKey = "defaultSecret"
+		}
+
+		return c.JSON(fiber.Map{
+			"secret_key": secretKey,
 		})
 	})
 
