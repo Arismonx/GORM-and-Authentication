@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"gorm.io/gorm"
@@ -60,13 +59,13 @@ func getProducts(db *gorm.DB) []Product {
 	return product
 }
 
-func deleteProduct(db *gorm.DB, id uint) {
+func deleteProduct(db *gorm.DB, id uint) error {
 	var product Product
 	result := db.Delete(&product, id)
 
 	if result.Error != nil {
-		log.Fatalf("Error delete product: %v", result.Error)
+		return result.Error
 	}
 
-	fmt.Println("Delete Successful")
+	return nil
 }

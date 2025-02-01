@@ -114,6 +114,25 @@ func main() {
 			"message": "Update Product Successful",
 		})
 	})
+
+	app.Delete("/product/:id", func(c *fiber.Ctx) error {
+		uint_id, err := strconv.Atoi(c.Params("id"))
+		id := uint(uint_id)
+
+		if err != nil {
+			return c.SendStatus(fiber.StatusBadRequest)
+		}
+
+		err = deleteProduct(db, id)
+
+		if err != nil {
+			return c.SendStatus(fiber.StatusBadRequest)
+		}
+
+		return c.JSON(fiber.Map{
+			"message": "Delete Product Successful",
+		})
+	})
 	app.Listen(":8080")
 
 	// product := Product{
