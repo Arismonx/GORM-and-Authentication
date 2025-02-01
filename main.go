@@ -52,12 +52,18 @@ func main() {
 
 	// createProduct(db, &product)
 
-	currenProduct := getProduct(db, 1)
-	fmt.Println(currenProduct)
+	// currenProduct := getProduct(db, 2)
+	// fmt.Println(currenProduct)
 
-	currenProduct.Name = "newtuschy"
-	currenProduct.Description = "NEW"
-	currenProduct.Price = 2000
+	// currenProduct.Name = "newtuschy"
+	// currenProduct.Description = "NEW"
+	// currenProduct.Price = 2000
 
-	updateProduct(db, currenProduct)
+	// updateProduct(db, currenProduct)
+
+	deleteProduct(db, 2)
+
+	// cur := getProducts(db)
+	// fmt.Println(cur)
+
 }

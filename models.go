@@ -46,12 +46,25 @@ func getProduct(db *gorm.DB, id uint) *Product {
 	// fmt.Printf("Get Product Successful %v", result.RowsAffected)
 }
 
-// func getProducts(db *gorm.DB, product *Product) {
-// 	result := db.Find(&product)
+func getProducts(db *gorm.DB) *Product {
+	var product Product
+	result := db.Find(&product)
 
-// 	if result.Error != nil {
-// 		log.Fatalf("Error get product: %v", result.Error)
-// 	}
+	if result.Error != nil {
+		log.Fatalf("Error get product: %v", result.Error)
+	}
 
-// 	fmt.Println("Get Products Successful", result.RowsAffected)
-// }
+	// fmt.Println("Get Products Successful", result.RowsAffected)
+	return &product
+}
+
+func deleteProduct(db *gorm.DB, id uint) {
+	var product Product
+	result := db.Delete(&product, id)
+
+	if result.Error != nil {
+		log.Fatalf("Error delete product: %v", result.Error)
+	}
+
+	fmt.Println("Delete Successful")
+}
