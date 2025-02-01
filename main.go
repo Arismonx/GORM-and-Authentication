@@ -142,6 +142,7 @@ func main() {
 			"message": "Delete Product Successful",
 		})
 	})
+
 	// env
 
 	app.Get("/api/config", func(c *fiber.Ctx) error {
@@ -172,6 +173,31 @@ func main() {
 
 		return c.JSON(fiber.Map{
 			"message": "Create User Successful",
+		})
+	})
+
+	app.Post("/login", func(c *fiber.Ctx) error {
+		user := new(User)
+
+		if err := c.BodyParser(user); err != nil {
+			return c.SendStatus(fiber.StatusBadRequest)
+		}
+
+		token, err := loginUser(db, user)
+
+		if err != nil {
+			return c.SendStatus(fiber.StatusUnauthorized)
+		}
+
+		c.Cookie(&fiber.Cookie{
+			Name:     "jwt",
+			Value:    token,
+			Expires:  time.Now().Add(time.Hour * 72),
+			HTTPOnly: true,
+		})
+
+		return c.JSON(fiber.Map{
+			"massage": "Login Successful",
 		})
 	})
 
