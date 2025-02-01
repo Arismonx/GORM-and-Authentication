@@ -43,10 +43,11 @@ func main() {
 	if err != nil {
 		panic("failed to connect database")
 	}
-
-	db.AutoMigrate(&Product{}) //Auto Create Table จะลบไม่ได้
+	// Create Table
+	db.AutoMigrate(&Product{}, &User{}) //Auto Create Table จะลบไม่ได้
 	fmt.Print("Migrate Successful")
 
+	// Product API
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello World")
 	})
@@ -78,7 +79,7 @@ func main() {
 			return c.SendStatus(fiber.StatusBadRequest)
 		}
 
-		err := createProduct(db, product)
+		err = createProduct(db, product)
 
 		if err != nil {
 			return c.SendStatus(fiber.StatusBadRequest)
@@ -133,28 +134,26 @@ func main() {
 			"message": "Delete Product Successful",
 		})
 	})
+
+	// User API
+
+	app.Post("/register", func(c *fiber.Ctx) error {
+		user := new(User)
+
+		if err := c.BodyParser(user); err != nil {
+			return c.SendStatus(fiber.StatusBadRequest)
+		}
+
+		err = createUser(db, user)
+
+		if err != nil {
+			return c.SendStatus(fiber.StatusBadRequest)
+		}
+
+		return c.JSON(fiber.Map{
+			"message": "Create User Successful",
+		})
+	})
+
 	app.Listen(":8080")
-
-	// product := Product{
-	// 	Name:        "Tuschy_5",
-	// 	Description: "MAMA5",
-	// 	Price:       1005,
-	// }
-
-	// createProduct(db, &product)
-
-	// currenProduct := getProduct(db, 2)
-	// fmt.Println(currenProduct)
-
-	// currenProduct.Name = "newtuschy"
-	// currenProduct.Description = "NEW"
-	// currenProduct.Price = 2000
-
-	// updateProduct(db, currenProduct)
-
-	// deleteProduct(db, 2)
-
-	// cur := getProducts(db)
-	// fmt.Println(cur)
-
 }

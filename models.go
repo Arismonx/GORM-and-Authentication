@@ -8,9 +8,9 @@ import (
 
 type Product struct {
 	gorm.Model
-	Name        string `json: name`
-	Description string `json: description`
-	Price       int    `json: price`
+	Name        string `json: "name"`
+	Description string `json: "description"`
+	Price       int    `json: "price"`
 }
 
 func createProduct(db *gorm.DB, product *Product) error {
@@ -19,8 +19,6 @@ func createProduct(db *gorm.DB, product *Product) error {
 	if result.Error != nil {
 		return result.Error
 	}
-
-	// fmt.Printf("Result Error : %v", result.Error)
 	return nil
 }
 
