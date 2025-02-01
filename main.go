@@ -106,6 +106,10 @@ func main() {
 		product.ID = id
 		err = updateProduct(db, product)
 
+		if err != nil {
+			return c.SendStatus(fiber.StatusBadRequest)
+		}
+
 		return c.JSON(fiber.Map{
 			"message": "Update Product Successful",
 		})
