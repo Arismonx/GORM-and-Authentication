@@ -45,9 +45,9 @@ func main() {
 	fmt.Print("Migrate Successful")
 
 	// product := Product{
-	// 	Name:        "New Tuschy",
-	// 	Description: "New Test_2",
-	// 	Price:       1000,
+	// 	Name:        "Tuschy_4",
+	// 	Description: "MAMA3",
+	// 	Price:       1003,
 	// }
 
 	// createProduct(db, &product)
@@ -61,9 +61,9 @@ func main() {
 
 	// updateProduct(db, currenProduct)
 
-	deleteProduct(db, 2)
+	// deleteProduct(db, 2)
 
-	// cur := getProducts(db)
-	// fmt.Println(cur)
+	cur := getProducts(db)
+	fmt.Println(cur)
 
 }

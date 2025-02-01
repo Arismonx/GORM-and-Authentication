@@ -46,8 +46,8 @@ func getProduct(db *gorm.DB, id uint) *Product {
 	// fmt.Printf("Get Product Successful %v", result.RowsAffected)
 }
 
-func getProducts(db *gorm.DB) *Product {
-	var product Product
+func getProducts(db *gorm.DB) []Product {
+	var product []Product
 	result := db.Find(&product)
 
 	if result.Error != nil {
@@ -55,7 +55,7 @@ func getProducts(db *gorm.DB) *Product {
 	}
 
 	// fmt.Println("Get Products Successful", result.RowsAffected)
-	return &product
+	return product
 }
 
 func deleteProduct(db *gorm.DB, id uint) {
