@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -20,6 +22,7 @@ const (
 )
 
 func main() {
+	app := fiber.New()
 	dsn := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
@@ -44,10 +47,75 @@ func main() {
 	db.AutoMigrate(&Product{}) //Auto Create Table จะลบไม่ได้
 	fmt.Print("Migrate Successful")
 
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello World")
+	})
+
+	app.Get("/product", func(c *fiber.Ctx) error {
+		return c.JSON(getProducts(db))
+	})
+
+	app.Get("/product/:id", func(c *fiber.Ctx) error {
+		uint_id, err := strconv.Atoi(c.Params("id"))
+		id := uint(uint_id)
+
+		if err != nil {
+			return c.SendStatus(fiber.StatusBadRequest)
+		}
+
+		cur := getProduct(db, id)
+		if cur == nil {
+			return c.Status(fiber.StatusNotFound).SendString("Not Found")
+		}
+
+		return c.JSON(cur)
+	})
+
+	app.Post("/product", func(c *fiber.Ctx) error {
+		product := new(Product)
+
+		if err := c.BodyParser(product); err != nil {
+			return c.SendStatus(fiber.StatusBadRequest)
+		}
+
+		err := createProduct(db, product)
+
+		if err != nil {
+			return c.SendStatus(fiber.StatusBadRequest)
+		}
+
+		return c.JSON(fiber.Map{
+			"message": "Create Product Successful",
+		})
+	})
+
+	app.Put("/product/:id", func(c *fiber.Ctx) error {
+		uint_id, err := strconv.Atoi(c.Params("id"))
+		id := uint(uint_id)
+
+		if err != nil {
+			return c.SendStatus(fiber.StatusBadRequest)
+		}
+
+		product := new(Product)
+
+		if err := c.BodyParser(product); err != nil {
+			return c.SendStatus(fiber.StatusBadRequest)
+		}
+
+		product.ID = id
+		err = updateProduct(db, product)
+
+		return c.JSON(fiber.Map{
+			"message": "Update Product Successful",
+		})
+	})
+	app.Listen(":8080")
+
 	// product := Product{
-	// 	Name:        "Tuschy_4",
-	// 	Description: "MAMA3",
-	// 	Price:       1003,
+	// 	Name:        "Tuschy_5",
+	// 	Description: "MAMA5",
+	// 	Price:       1005,
 	// }
 
 	// createProduct(db, &product)
@@ -63,7 +131,7 @@ func main() {
 
 	// deleteProduct(db, 2)
 
-	cur := getProducts(db)
-	fmt.Println(cur)
+	// cur := getProducts(db)
+	// fmt.Println(cur)
 
 }

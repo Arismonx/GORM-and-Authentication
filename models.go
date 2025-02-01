@@ -9,29 +9,30 @@ import (
 
 type Product struct {
 	gorm.Model
-	Name        string
-	Description string
-	Price       int
+	Name        string `json: name`
+	Description string `json: description`
+	Price       int    `json: price`
 }
 
-func createProduct(db *gorm.DB, product *Product) {
+func createProduct(db *gorm.DB, product *Product) error {
 	result := db.Create(&product)
 
 	if result.Error != nil {
-		log.Fatalf("Error creating product: %v", result.Error)
+		return result.Error
 	}
 
-	fmt.Println("Create Successful")
+	// fmt.Printf("Result Error : %v", result.Error)
+	return nil
 }
 
-func updateProduct(db *gorm.DB, product *Product) {
+func updateProduct(db *gorm.DB, product *Product) error {
 	result := db.Save(&product)
 
 	if result.Error != nil {
-		log.Fatalf("Error creating product: %v", result.Error)
+		return result.Error
 	}
 
-	fmt.Println("Updete Successful")
+	return nil
 }
 
 func getProduct(db *gorm.DB, id uint) *Product {
@@ -39,7 +40,8 @@ func getProduct(db *gorm.DB, id uint) *Product {
 	result := db.First(&product, id)
 
 	if result.Error != nil {
-		log.Fatalf("Error get product: %v", result.Error)
+		// log.Fatalf("Error get product: %v", result.Error)
+		return nil
 	}
 
 	return &product
