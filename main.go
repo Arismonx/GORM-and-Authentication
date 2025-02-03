@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -21,6 +22,24 @@ const (
 	password = "mypassword" // as defined in docker-compose.yml
 	dbname   = "mydatabase" // as defined in docker-compose.yml
 )
+
+func authRequired(c *fiber.Ctx) error {
+	cookie := c.Cookies("jwt")
+	jwtSecretKey := os.Getenv("SECRET_KEY")
+
+	token, err := jwt.ParseWithClaims(cookie, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(jwtSecretKey), nil
+	})
+
+	if err != nil {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	claim := token.Claims.(jwt.MapClaims)
+
+	fmt.Println(claim)
+	return c.Next()
+}
 
 func main() {
 
@@ -51,9 +70,13 @@ func main() {
 	if err != nil {
 		panic("failed to connect database")
 	}
+
 	// Create Table
 	db.AutoMigrate(&Product{}, &User{}) //Auto Create Table จะลบไม่ได้
 	fmt.Print("Migrate Successful")
+
+	// Middleware
+	app.Use("/product", authRequired)
 
 	// Product API
 	app.Get("/", func(c *fiber.Ctx) error {
@@ -199,6 +222,7 @@ func main() {
 		return c.JSON(fiber.Map{
 			"massage": "Login Successful",
 		})
+
 	})
 
 	app.Listen(":8080")
