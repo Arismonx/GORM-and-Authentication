@@ -15,14 +15,6 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-const (
-	host     = "localhost"  // or the Docker service name if running in another container
-	port     = 5432         // default PostgreSQL port
-	user     = "myuser"     // as defined in docker-compose.yml
-	password = "mypassword" // as defined in docker-compose.yml
-	dbname   = "mydatabase" // as defined in docker-compose.yml
-)
-
 func authRequired(c *fiber.Ctx) error {
 	cookie := c.Cookies("jwt")
 	jwtSecretKey := os.Getenv("SECRET_KEY")
@@ -48,6 +40,13 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
+	// Read database configuration from .env file
+	host := os.Getenv("DB_HOST")
+	port, _ := strconv.Atoi(os.Getenv("DB_PORT"))
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
 
 	app := fiber.New()
 	dsn := fmt.Sprintf("host=%s port=%d user=%s "+
@@ -225,5 +224,5 @@ func main() {
 
 	})
 
-	app.Listen(":8080")
+	app.Listen(":8000")
 }
